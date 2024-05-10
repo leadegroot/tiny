@@ -5,7 +5,7 @@ given Mui React like this (stripped down)
     variant="standard"
     onChange={handleChange('sys_link_file_type')}
 >
-    {getFileTypeList.map((type, index) => (
+    {getFileTypeList.map((type, index) => ( // or getFileTypeList() if calling from a function rather than a const
         <MenuItem
         >
             {type.sys_link_file_type}
@@ -17,20 +17,20 @@ given Mui React like this (stripped down)
 this IIFE function works (wow!):
 ```javascript
 const getFileTypeList = (() => {
-        let fileTypeList = [];
-        if (mode === 'add') {
-            fileTypeList = sysFileTypeList || [];
-        } else {
-            fileTypeList = formValues.sys_link_types || [];
-        }
-        return (
-            !!fileTypeList &&
-            fileTypeList.length > 0 &&
-            fileTypeList.filter(type => {
-                return type.sys_link_interaction_type === linkInteractionTypeSelectRef.current;
-            })
-        );
-    })();
+    let fileTypeList = [];
+    if (mode === 'add') {
+        fileTypeList = sysFileTypeList || [];
+    } else {
+        fileTypeList = formValues.sys_link_types || [];
+    }
+    return (
+        !!fileTypeList &&
+        fileTypeList.length > 0 &&
+        fileTypeList.filter(type => {
+            return type.sys_link_interaction_type === linkInteractionTypeSelectRef.current;
+        })
+    );
+})();
 ```
 
 and this works:
@@ -50,39 +50,37 @@ const getFileTypeList = getFileTypeListbyMode().filter(
 but stripping it back to a simple const:
 ```javascript
 const getFileTypeList = () => {
-        let fileTypeList = [];
-        if (mode === 'add') {
-            fileTypeList = sysFileTypeList || [];
-        } else {
-            fileTypeList = formValues.sys_link_types || [];
-        }
-        return (
-            !!fileTypeList &&
-            fileTypeList.length > 0 &&
-            fileTypeList.filter(type => {
-                return type.sys_link_interaction_type === linkInteractionTypeSelectRef.current;
-            })
-        );
-    };
+    let fileTypeList = [];
+    if (mode === 'add') {
+        fileTypeList = sysFileTypeList || [];
+    } else {
+        fileTypeList = formValues.sys_link_types || [];
+    }
+    return (
+        !!fileTypeList &&
+        fileTypeList.length > 0 &&
+        fileTypeList.filter(type => {
+            return type.sys_link_interaction_type === linkInteractionTypeSelectRef.current;
+        })
+    );
+};
 ```
 gives a big fat black-background
 "getFileTypeList.map is not a function"
 
 (can also do it as function)
 
-basically whenever I put a "body" on the const declaration (because I need to do deep manipulation to get the subset of the api data that I need)
-it fails, even
+basically the const usage always fails, even simplifying:
 ```javascript
 const getFileTypeList = () => {
-  return [];
-);
+  return ['a'];
+};
 ```
 
-gives an error
-
-where
 ```javascript
-const getFileTypeList = () => [];
+const getFileTypeList = () => ['a'];
 ```
 
-does not
+gives the error, but wrapping the const in the IIFE does not.
+
+Time of execution thing?
