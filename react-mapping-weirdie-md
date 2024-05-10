@@ -3,15 +3,86 @@ given Mui React like this (stripped down)
 ```javascript
 <Select
     variant="standard"
-    onChange={handleChange('object_link_file_type')}
+    onChange={handleChange('sys_link_file_type')}
 >
     {getFileTypeList.map((type, index) => (
         <MenuItem
         >
-            {type.object_link_file_type}
+            {type.sys_link_file_type}
         </MenuItem>
     ))}
 </Select>
 ```
 
+this IIFE function works (wow!):
+```javascript
+const getFileTypeList = (() => {
+        let fileTypeList = [];
+        if (mode === 'add') {
+            fileTypeList = sysFileTypeList || [];
+        } else {
+            fileTypeList = formValues.sys_link_types || [];
+        }
+        return (
+            !!fileTypeList &&
+            fileTypeList.length > 0 &&
+            fileTypeList.filter(type => {
+                return type.sys_link_interaction_type === linkInteractionTypeSelectRef.current;
+            })
+        );
+    })();
+```
 
+and this works:
+```javascript
+const getFileTypeListbyMode = () => {
+    if (mode === 'add') {
+        return sysFileTypeList || [];
+    }
+    // else Edit
+    return formValues?.sys_link_types || [];
+};
+
+const getFileTypeList = getFileTypeListbyMode().filter(
+    type => type.sys_link_interaction_type === linkInteractionTypeSelectRef.current,
+);
+```
+but stripping it back to a simple const:
+```javascript
+const getFileTypeList = () => {
+        let fileTypeList = [];
+        if (mode === 'add') {
+            fileTypeList = sysFileTypeList || [];
+        } else {
+            fileTypeList = formValues.sys_link_types || [];
+        }
+        return (
+            !!fileTypeList &&
+            fileTypeList.length > 0 &&
+            fileTypeList.filter(type => {
+                return type.sys_link_interaction_type === linkInteractionTypeSelectRef.current;
+            })
+        );
+    };
+```
+gives a big fat black-background
+"getFileTypeList.map is not a function"
+
+(can also do it as function)
+
+basically whenever I put a "body" on the const declaration (because I need to do deep manipulation to get the subset of the api data that I need)
+it fails, even
+```javascript
+const getFileTypeList = () => {
+  return [];
+);
+```
+
+gives an error
+
+where
+```javascript
+const getFileTypeList = () => [];
+```
+
+does not
