@@ -1,1 +1,17 @@
+given Mui React like this (stripped down)
+
+```javascript
+<Select
+    variant="standard"
+    onChange={handleChange('object_link_file_type')}
+>
+    {getFileTypeList.map((type, index) => (
+        <MenuItem
+        >
+            {type.object_link_file_type}
+        </MenuItem>
+    ))}
+</Select>
+```
+
 
